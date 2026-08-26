@@ -450,6 +450,11 @@ footer p { font-size:14px; color:var(--muted); margin:0; }
 <script>
 (function() {
   var RANGE = { w: [150, 900], d: [120, 700], h: [25, 120] };
+  // Set by Claude once the Owner creates a free Formspree form and
+  // supplies the resulting form ID (formspree.io/f/XXXXXXXX -- the
+  // XXXXXXXX part). Until this is set, the waitlist button deliberately
+  // does NOT claim success -- there is nowhere for the email to go yet.
+  var FORMSPREE_FORM_ID = '';
 
   var ctaBtn = document.getElementById('ctaBtn');
   var form = document.getElementById('measureForm');
@@ -516,8 +521,10 @@ footer p { font-size:14px; color:var(--muted); margin:0; }
   });
 
   waitlistBtn.addEventListener('click', function() {
-    var email = document.getElementById('f_email').value.trim();
-    var consent = document.getElementById('f_consent').checked;
+    var emailField = document.getElementById('f_email');
+    var consentField = document.getElementById('f_consent');
+    var email = emailField.value.trim();
+    var consent = consentField.checked;
     var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     waitlistMsg.style.display = 'block';
@@ -531,11 +538,30 @@ footer p { font-size:14px; color:var(--muted); margin:0; }
       return;
     }
 
-    track('waitlist_submit');
-    waitlistMsg.textContent = 'Thanks — we’ll email you if this becomes available.';
-    document.getElementById('f_email').disabled = true;
-    document.getElementById('f_consent').disabled = true;
+    if (!FORMSPREE_FORM_ID) {
+      // Honest failure: nothing is wired up to receive this yet, so we
+      // do not claim success. Never shown once FORMSPREE_FORM_ID is set.
+      waitlistMsg.textContent = 'Sign-up isn’t live yet — please check back soon.';
+      return;
+    }
+
     waitlistBtn.disabled = true;
+    waitlistMsg.textContent = 'Sending…';
+
+    fetch('https://formspree.io/f/' + FORMSPREE_FORM_ID, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, source: 'drawerfit-landing-waitlist' })
+    }).then(function(res) {
+      if (!res.ok) { throw new Error('submit failed'); }
+      track('waitlist_submit');
+      waitlistMsg.textContent = 'Thanks — we’ll email you if this becomes available.';
+      emailField.disabled = true;
+      consentField.disabled = true;
+    }).catch(function() {
+      waitlistMsg.textContent = 'Something went wrong sending that — please try again.';
+      waitlistBtn.disabled = false;
+    });
   });
 })();
 </script>
