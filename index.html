@@ -73,6 +73,7 @@ p { margin: 0 0 12px; }
 
 /* Hero (two-column on desktop: text left, comparison visual right) */
 .hero { padding: 36px 0 40px; }
+.hero .wrap { max-width: 1240px; }
 .hero-grid { display:grid; grid-template-columns: 1fr; gap:32px; align-items:center; }
 .hero-copy { text-align:center; }
 .hero-copy p.sub { font-size:17px; max-width:480px; margin:0 auto 22px; color: var(--muted); }
@@ -103,7 +104,7 @@ p { margin: 0 0 12px; }
 .step p { font-size:16px; margin:0; color:var(--muted); }
 
 /* Example */
-.example-figure { border-radius: var(--radius); overflow:hidden; border:1px solid var(--line); max-width:50%; margin:0 auto; }
+.example-figure { border-radius: var(--radius); overflow:hidden; border:1px solid var(--line); max-width:72%; margin:0 auto; }
 .example-dims {
   display:inline-block; font-weight:700; font-size:15px;
   background: var(--surface); border-radius:999px; padding:6px 16px; margin-bottom:14px;
@@ -191,7 +192,7 @@ footer p { font-size:14px; color:var(--muted); margin:0; }
 @media (min-width: 760px) {
   h1 { font-size: 42px; }
   .hero { padding: 44px 0 48px; }
-  .hero-grid { grid-template-columns: 1.05fr 1fr; gap:44px; }
+  .hero-grid { grid-template-columns: 0.85fr 1.15fr; gap:44px; }
   .hero-copy { text-align:left; }
   .hero-copy p.sub { margin:0 0 22px; }
   .steps { grid-template-columns: repeat(3, 1fr); }
